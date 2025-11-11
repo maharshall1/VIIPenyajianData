@@ -1,0 +1,1233 @@
+<!doctype html>
+<html lang="id">
+ <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Media Pembelajaran: Penyajian Data</title>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    :root{
+      --bg1: #f6faf6;
+      --card: #ffffff;
+      --sage-1: #bcd8c1;
+      --sage-2: #9fc19a;
+      --sage-3: #7da77d;
+      --accent: #7da77d;
+      --accent2: #bcd8c1;
+      --muted: #51625a;
+      --glass: rgba(255,255,255,0.75);
+      --radius: 14px;
+      font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      background: linear-gradient(180deg,#f9fdf9 0%, #ffffff 60%);
+      color:#0b1a16;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+      overflow-y:auto;
+    }
+    .wrap{max-width:1100px;margin:28px auto;padding:20px}
+    header{
+      display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;
+    }
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{
+      width:64px;height:64px;border-radius:14px;
+      background:linear-gradient(135deg,var(--sage-3),var(--sage-2));
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:20px;
+      box-shadow:0 10px 30px rgba(125,167,125,0.12);
+    }
+    .title h1{margin:0;font-size:18px;font-weight:700}
+    .title p{margin:4px 0 0 0;color:var(--muted);font-size:13px}
+    nav.topnav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    nav.topnav button{
+      padding:8px 12px;border-radius:10px;border:0;background:transparent;color:var(--muted);cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s;
+    }
+    nav.topnav button:hover{background:rgba(125,167,125,0.08)}
+    nav.topnav button.active{background:linear-gradient(90deg,var(--sage-3),var(--sage-2));color:white;box-shadow:0 8px 20px rgba(125,167,125,0.12)}
+    .card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:0 12px 30px rgba(12,24,20,0.04);margin-bottom:16px}
+    .card h2{margin:0 0 12px 0;font-size:20px;color:var(--sage-3)}
+    .card h3{margin:16px 0 8px 0;font-size:16px;color:var(--sage-3)}
+    .card h4{margin:12px 0 8px 0;font-size:15px;color:var(--sage-3)}
+    .card p{margin:8px 0;line-height:1.6}
+    .card ul{margin:8px 0;padding-left:24px}
+    .card li{margin:6px 0}
+    .row{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+    .col-1{flex:1;min-width:300px}
+    .col-2{flex:0 0 340px;min-width:300px}
+    .btn{
+      display:inline-block;padding:10px 16px;border-radius:10px;border:0;cursor:pointer;font-weight:700;
+      background:linear-gradient(90deg,var(--sage-3),var(--sage-2));color:white;font-size:14px;transition:all 0.2s;
+    }
+    .btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(125,167,125,0.2)}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .btn.ghost{background:transparent;border:2px solid var(--sage-2);color:var(--sage-3)}
+    .btn.ghost:hover{background:rgba(125,167,125,0.08)}
+    .muted{color:var(--muted);font-size:13px}
+    .progress{height:10px;background: #eef7ee;border-radius:999px;overflow:hidden;margin-top:8px}
+    .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--sage-3),var(--sage-2));width:0%;transition:width 0.3s}
+    label{display:block;margin-bottom:6px;font-weight:600;font-size:14px}
+    input[type="text"],input[type="number"],textarea,select{
+      width:100%;padding:10px;border-radius:10px;border:1px solid #eef7ef;background:#fbfefe;font-size:14px;color:#0b1a16;font-family:inherit;
+    }
+    input:focus,textarea:focus,select:focus{outline:2px solid var(--sage-2);border-color:var(--sage-2)}
+    textarea{min-height:72px;resize:vertical}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .small{font-size:13px;color:var(--muted)}
+    .charts{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-top:12px}
+    .chart-container{flex:1;min-width:280px;max-width:450px}
+    canvas{background:linear-gradient(180deg,#ffffff,#fbfefb);border-radius:12px;box-shadow:0 8px 24px rgba(2,6,8,0.03)}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:768px){
+      .grid-2{grid-template-columns:1fr}
+    }
+    .hidden{display:none}
+    .tag{display:inline-block;padding:6px 10px;border-radius:8px;background:#f6fff6;color:#3f6a53;font-weight:700;font-size:13px;margin-right:6px}
+    .question{background:#f9fdf9;padding:14px;border-radius:10px;margin:12px 0;border-left:4px solid var(--sage-2)}
+    .question p{margin:0 0 8px 0;font-weight:600}
+    .options label{display:flex;align-items:center;gap:8px;padding:8px;cursor:pointer;border-radius:8px;transition:background 0.2s}
+    .options label:hover{background:#f6fff6}
+    .options input[type="radio"]{margin:0}
+    .result{padding:14px;border-radius:10px;margin-top:12px;font-weight:600}
+    .result.success{background:#e8f5e9;color:#2e7d32;border:2px solid #81c784}
+    .result.info{background:#e3f2fd;color:#1565c0;border:2px solid #64b5f6}
+    .data-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+    .data-row input{flex:1}
+    .data-row button{padding:8px 12px;border-radius:8px;border:0;background:#ffebee;color:#c62828;cursor:pointer;font-weight:600}
+    .toast{position:fixed;bottom:20px;right:20px;background:var(--sage-3);color:white;padding:14px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.15);z-index:1000;animation:slideIn 0.3s}
+    @keyframes slideIn{from{transform:translateX(400px);opacity:0}to{transform:translateX(0);opacity:1}}
+    .spinner{border:3px solid #f3f3f3;border-top:3px solid var(--sage-3);border-radius:50%;width:20px;height:20px;animation:spin 1s linear infinite;display:inline-block;margin-left:8px}
+    @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+    .game-option{
+      background:#f9fdf9;padding:16px;border-radius:10px;margin:8px 0;cursor:pointer;border:2px solid transparent;transition:all 0.2s;
+    }
+    .game-option:hover{background:#f0f8f0;border-color:var(--sage-2)}
+    .game-option.selected{background:#e8f5e9;border-color:var(--sage-3)}
+    .game-option.correct{background:#c8e6c9;border-color:#4caf50}
+    .game-option.wrong{background:#ffcdd2;border-color:#f44336}
+    .score-display{
+      background:linear-gradient(135deg,var(--sage-3),var(--sage-2));
+      color:white;padding:16px;border-radius:12px;text-align:center;font-size:18px;font-weight:700;
+      box-shadow:0 8px 20px rgba(125,167,125,0.2);
+    }
+    .author-card{
+      background:linear-gradient(135deg,#f6fff6,#ffffff);
+      border:2px solid var(--sage-2);
+      padding:32px;
+      border-radius:16px;
+      text-align:center;
+      box-shadow:0 12px 30px rgba(125,167,125,0.1);
+    }
+    .author-avatar{
+      width:120px;height:120px;
+      background:linear-gradient(135deg,var(--sage-3),var(--sage-2));
+      border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:48px;
+      margin:0 auto 20px;
+      box-shadow:0 8px 24px rgba(125,167,125,0.2);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="wrap">
+   <header>
+    <div class="brand">
+     <div class="logo" style="background:transparent;box-shadow:none;padding:0"><img src="https://lh3.googleusercontent.com/d/1yOc4Ry3Gcsf-qantaUNS5VI5LebKULsw" alt="Logo" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,var(--sage-3),var(--sage-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:20px;box-shadow:0 10px 30px rgba(125,167,125,0.12)\'>📊</div>';">
+     </div>
+     <div class="title">
+      <h1 id="appTitle">Media Pembelajaran: Penyajian Data</h1>
+      <p id="appSubtitle">Matematika Kelas VII - Diagram Batang &amp; Lingkaran</p>
+     </div>
+    </div>
+    <nav class="topnav"><button class="active" data-tab="materi">Materi</button> <button data-tab="lkpd">LKPD</button> <button data-tab="pretest">Pretest</button> <button data-tab="posttest">Posttest</button> <button data-tab="game">Game</button> <button data-tab="hasil">Hasil</button> <button data-tab="penyusun">Penyusun</button>
+    </nav>
+   </header><!-- Tab Materi -->
+   <div id="tab-materi" class="tab-content">
+    <div class="card">
+     <h2>📚 Materi: Penyajian Data</h2>
+     <p>Penyajian data adalah cara menampilkan data dalam bentuk yang mudah dipahami dan dianalisis. Dalam matematika kelas VII, kita akan mempelajari dua bentuk diagram utama: <strong>diagram batang</strong> dan <strong>diagram lingkaran</strong>.</p>
+     <div style="background:#f6fff6;padding:16px;border-radius:10px;margin:16px 0;border-left:4px solid var(--sage-3)">
+      <h4 style="margin:0 0 8px 0;color:var(--sage-3)">🎯 Tujuan Pembelajaran</h4>
+      <ul style="margin:8px 0;padding-left:20px">
+       <li>Peserta didik mampu memahami konsep penyajian data dalam bentuk diagram.</li>
+       <li>Peserta didik mampu membuat diagram batang dari data yang diberikan.</li>
+       <li>Peserta didik mampu membuat diagram lingkaran dengan perhitungan sudut dan persentase.</li>
+       <li>Peserta didik mampu menganalisis dan membandingkan data dari diagram.</li>
+       <li>Melalui kegiatan kelompok, peserta didik mampu menyajikan data dalambentuk diagram batang dengan tepat.</li>
+      </ul>
+     </div>
+     <div style="background:#ffffff;padding:20px;border-radius:12px;margin:20px 0;border:2px solid var(--sage-2);box-shadow:0 8px 20px rgba(125,167,125,0.1)">
+      <h3 style="margin:0 0 12px 0;color:var(--sage-3);display:flex;align-items:center;gap:8px">🎥 Video Pembelajaran</h3>
+      <p style="margin:0 0 16px 0;color:var(--muted)">Tonton video pembelajaran tentang penyajian data untuk memahami materi dengan lebih mudah!</p>
+      <div style="background:linear-gradient(135deg,#f6fff6,#ffffff);padding:24px;border-radius:12px;text-align:center;border:2px dashed var(--sage-2)">
+       <div style="font-size:64px;margin-bottom:16px">
+        📺
+       </div>
+       <h4 style="margin:0 0 12px 0;color:var(--sage-3);font-size:18px">Video: Penyajian Data - Diagram Batang &amp; Lingkaran</h4>
+       <p style="margin:0 0 20px 0;color:var(--muted);font-size:14px">Klik tombol di bawah untuk menonton video di YouTube</p><a href="https://www.youtube.com/watch?v=Ekc6NikpS6E" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:14px 28px;background:linear-gradient(90deg,#FF0000,#CC0000);color:white;text-decoration:none;border-radius:10px;font-weight:700;font-size:16px;box-shadow:0 8px 20px rgba(255,0,0,0.2);transition:all 0.2s"> ▶️ Tonton di YouTube </a>
+       <p style="margin:16px 0 0 0;color:var(--muted);font-size:12px">Video akan terbuka di tab baru</p>
+      </div>
+     </div>
+     <h3>1. Diagram Batang</h3>
+     <p>Diagram batang adalah diagram yang menampilkan data dalam bentuk batang-batang tegak atau mendatar. Tinggi atau panjang batang menunjukkan nilai atau frekuensi data.</p>
+     <div style="background:#ffffff;padding:16px;border-radius:10px;margin:12px 0;border:2px solid #eef7ef">
+      <h4 style="margin:0 0 12px 0;color:var(--sage-3)">Karakteristik Diagram Batang:</h4>
+      <ul style="margin:0;padding-left:20px">
+       <li><strong>Sumbu Horizontal (X):</strong> Menunjukkan kategori atau jenis data</li>
+       <li><strong>Sumbu Vertikal (Y):</strong> Menunjukkan nilai atau frekuensi data</li>
+       <li><strong>Batang:</strong> Lebar batang sama, tinggi sesuai nilai data</li>
+       <li><strong>Jarak:</strong> Antar batang diberi jarak yang sama</li>
+       <li><strong>Kegunaan:</strong> Membandingkan data antar kategori dengan mudah</li>
+      </ul>
+     </div>
+     <div style="margin:20px 0">
+      <h4 style="color:var(--sage-3)">Contoh Diagram Batang:</h4>
+      <canvas id="exampleBarChart" style="max-width:600px;margin:12px auto;display:block"></canvas>
+      <p class="small" style="text-align:center;margin-top:8px">Diagram Batang: Nilai Ulangan Matematika Kelas VII</p>
+     </div>
+     <h3>2. Diagram Lingkaran</h3>
+     <p>Diagram lingkaran adalah diagram yang menampilkan data dalam bentuk lingkaran yang dibagi menjadi beberapa bagian (sektor). Setiap sektor menunjukkan proporsi atau persentase data terhadap keseluruhan.</p>
+     <div style="background:#ffffff;padding:16px;border-radius:10px;margin:12px 0;border:2px solid #eef7ef">
+      <h4 style="margin:0 0 12px 0;color:var(--sage-3)">Karakteristik Diagram Lingkaran:</h4>
+      <ul style="margin:0;padding-left:20px">
+       <li><strong>Bentuk:</strong> Lingkaran penuh (360°)</li>
+       <li><strong>Sektor:</strong> Bagian lingkaran yang menunjukkan proporsi data</li>
+       <li><strong>Sudut Sektor:</strong> Dihitung dengan rumus (nilai data ÷ total data) × 360°</li>
+       <li><strong>Persentase:</strong> Dihitung dengan rumus (nilai data ÷ total data) × 100%</li>
+       <li><strong>Kegunaan:</strong> Menunjukkan perbandingan bagian terhadap keseluruhan</li>
+      </ul>
+     </div>
+     <div style="margin:20px 0">
+      <h4 style="color:var(--sage-3)">Contoh Diagram Lingkaran:</h4>
+      <canvas id="examplePieChart" style="max-width:400px;margin:12px auto;display:block"></canvas>
+      <p class="small" style="text-align:center;margin-top:8px">Diagram Lingkaran: Hobi Siswa Kelas VII</p>
+     </div>
+     <h3>3. Rumus dan Perhitungan</h3>
+     <div style="background:#f6fff6;padding:16px;border-radius:10px;margin:12px 0">
+      <h4 style="margin:0 0 12px 0;color:var(--sage-3)">Rumus Diagram Lingkaran:</h4>
+      <div style="background:white;padding:12px;border-radius:8px;margin:8px 0">
+       <p style="margin:4px 0"><strong>Sudut Sektor:</strong></p>
+       <p style="margin:4px 0;font-size:16px;color:var(--sage-3)">Sudut = (Nilai Data ÷ Total Data) × 360°</p>
+      </div>
+      <div style="background:white;padding:12px;border-radius:8px;margin:8px 0">
+       <p style="margin:4px 0"><strong>Persentase:</strong></p>
+       <p style="margin:4px 0;font-size:16px;color:var(--sage-3)">Persentase = (Nilai Data ÷ Total Data) × 100%</p>
+      </div>
+     </div>
+     <h3>4. Contoh Soal Lengkap</h3>
+     <div style="background:#fff9e6;padding:16px;border-radius:10px;margin:12px 0;border-left:4px solid #f9a825">
+      <h4 style="margin:0 0 8px 0">📝 Soal:</h4>
+      <p>Data hobi siswa kelas VII-A:</p>
+      <ul style="margin:8px 0;padding-left:20px">
+       <li>Membaca: 8 siswa</li>
+       <li>Olahraga: 12 siswa</li>
+       <li>Musik: 6 siswa</li>
+       <li>Menggambar: 4 siswa</li>
+      </ul>
+      <p><strong>Pertanyaan:</strong> Buatlah diagram batang dan diagram lingkaran dari data tersebut!</p>
+     </div>
+     <div style="background:#e8f5e9;padding:16px;border-radius:10px;margin:12px 0;border-left:4px solid #4caf50">
+      <h4 style="margin:0 0 8px 0">✅ Penyelesaian:</h4>
+      <p><strong>Langkah 1: Hitung Total Data</strong></p>
+      <p style="margin:4px 0 12px 20px">Total = 8 + 12 + 6 + 4 = <strong>30 siswa</strong></p>
+      <p><strong>Langkah 2: Buat Diagram Batang</strong></p>
+      <p style="margin:4px 0 12px 20px">Buat batang dengan tinggi sesuai frekuensi masing-masing hobi. Sumbu X untuk kategori hobi, sumbu Y untuk jumlah siswa.</p>
+      <p><strong>Langkah 3: Hitung Sudut Sektor untuk Diagram Lingkaran</strong></p>
+      <ul style="margin:4px 0 12px 20px;padding-left:20px">
+       <li>Membaca: (8 ÷ 30) × 360° = <strong>96°</strong></li>
+       <li>Olahraga: (12 ÷ 30) × 360° = <strong>144°</strong></li>
+       <li>Musik: (6 ÷ 30) × 360° = <strong>72°</strong></li>
+       <li>Menggambar: (4 ÷ 30) × 360° = <strong>48°</strong></li>
+      </ul>
+      <p><strong>Langkah 4: Hitung Persentase</strong></p>
+      <ul style="margin:4px 0 12px 20px;padding-left:20px">
+       <li>Membaca: (8 ÷ 30) × 100% = <strong>26,7%</strong></li>
+       <li>Olahraga: (12 ÷ 30) × 100% = <strong>40%</strong></li>
+       <li>Musik: (6 ÷ 30) × 100% = <strong>20%</strong></li>
+       <li>Menggambar: (4 ÷ 30) × 100% = <strong>13,3%</strong></li>
+      </ul>
+      <p><strong>Kesimpulan:</strong> Hobi yang paling banyak diminati adalah Olahraga (40%), diikuti Membaca (26,7%), Musik (20%), dan Menggambar (13,3%).</p>
+     </div>
+     <div style="margin:20px 0">
+      <h4 style="color:var(--sage-3)">Visualisasi Contoh Soal:</h4>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px">
+       <div style="flex:1;min-width:280px">
+        <canvas id="solutionBarChart"></canvas>
+        <p class="small" style="text-align:center;margin-top:8px">Diagram Batang: Hobi Siswa</p>
+       </div>
+       <div style="flex:1;min-width:280px">
+        <canvas id="solutionPieChart"></canvas>
+        <p class="small" style="text-align:center;margin-top:8px">Diagram Lingkaran: Hobi Siswa</p>
+       </div>
+      </div>
+     </div>
+     <h3>5. Tips Membuat Diagram</h3>
+     <div style="background:#e3f2fd;padding:16px;border-radius:10px;margin:12px 0">
+      <h4 style="margin:0 0 12px 0;color:#1565c0">💡 Tips Diagram Batang:</h4>
+      <ul style="margin:0;padding-left:20px">
+       <li>Pastikan semua batang memiliki lebar yang sama</li>
+       <li>Beri jarak yang sama antar batang</li>
+       <li>Mulai skala dari 0 pada sumbu Y</li>
+       <li>Beri label yang jelas pada setiap sumbu</li>
+       <li>Gunakan warna yang berbeda untuk setiap batang (opsional)</li>
+      </ul>
+     </div>
+     <div style="background:#fce4ec;padding:16px;border-radius:10px;margin:12px 0">
+      <h4 style="margin:0 0 12px 0;color:#c2185b">💡 Tips Diagram Lingkaran:</h4>
+      <ul style="margin:0;padding-left:20px">
+       <li>Pastikan total sudut sektor = 360°</li>
+       <li>Pastikan total persentase = 100%</li>
+       <li>Mulai menggambar dari posisi jam 12 (atas)</li>
+       <li>Gambar searah jarum jam</li>
+       <li>Beri label atau keterangan pada setiap sektor</li>
+       <li>Gunakan warna berbeda untuk setiap sektor</li>
+      </ul>
+     </div>
+     <div style="background:#fff3e0;padding:16px;border-radius:10px;margin:16px 0;border-left:4px solid #ff9800">
+      <h4 style="margin:0 0 8px 0;color:#e65100">⚠️ Kesalahan yang Sering Terjadi:</h4>
+      <ul style="margin:8px 0;padding-left:20px">
+       <li>Lupa menghitung total data terlebih dahulu</li>
+       <li>Salah dalam perhitungan sudut sektor (lupa × 360°)</li>
+       <li>Total sudut tidak sama dengan 360°</li>
+       <li>Total persentase tidak sama dengan 100%</li>
+       <li>Tidak memberi label pada diagram</li>
+      </ul>
+     </div>
+    </div>
+   </div><!-- Tab LKPD -->
+   <div id="tab-lkpd" class="tab-content hidden">
+    <div class="card">
+     <h2 id="lkpdTitle">📝 Lembar Kerja Peserta Didik (LKPD)</h2>
+     <p>Masukkan data Anda sendiri dan lihat hasilnya dalam bentuk diagram batang dan lingkaran!</p>
+     <div style="margin-top:16px"><label>Judul Data:</label> <input type="text" id="dataTitle" placeholder="Contoh: Hobi Siswa Kelas VII" value="Hobi Siswa Kelas VII">
+     </div>
+     <div style="margin-top:16px"><label>Data (Kategori dan Nilai):</label>
+      <div id="dataInputs">
+       <div class="data-row"><input type="text" placeholder="Kategori" value="Membaca" class="cat-input"> <input type="number" placeholder="Nilai" value="8" min="0" class="val-input"> <button onclick="removeDataRow(this)">Hapus</button>
+       </div>
+       <div class="data-row"><input type="text" placeholder="Kategori" value="Olahraga" class="cat-input"> <input type="number" placeholder="Nilai" value="12" min="0" class="val-input"> <button onclick="removeDataRow(this)">Hapus</button>
+       </div>
+       <div class="data-row"><input type="text" placeholder="Kategori" value="Musik" class="cat-input"> <input type="number" placeholder="Nilai" value="6" min="0" class="val-input"> <button onclick="removeDataRow(this)">Hapus</button>
+       </div>
+       <div class="data-row"><input type="text" placeholder="Kategori" value="Menggambar" class="cat-input"> <input type="number" placeholder="Nilai" value="4" min="0" class="val-input"> <button onclick="removeDataRow(this)">Hapus</button>
+       </div>
+      </div>
+      <div class="controls"><button class="btn ghost" onclick="addDataRow()">+ Tambah Data</button> <button class="btn" onclick="generateCharts()">Buat Diagram</button>
+      </div>
+     </div>
+     <div id="chartResults" class="hidden" style="margin-top:20px">
+      <h3>Hasil Diagram:</h3>
+      <div class="charts">
+       <div class="chart-container">
+        <canvas id="barChart"></canvas>
+       </div>
+       <div class="chart-container">
+        <canvas id="pieChart"></canvas>
+       </div>
+      </div>
+      <div style="margin-top:16px;padding:14px;background:#f9fdf9;border-radius:10px">
+       <h4 style="margin:0 0 8px 0;color:var(--sage-3)">Analisis Data:</h4>
+       <p id="analysisText" style="margin:0"></p>
+      </div>
+     </div>
+    </div>
+   </div><!-- Tab Pretest -->
+   <div id="tab-pretest" class="tab-content hidden">
+    <div class="card">
+     <h2 id="pretestTitle">📋 Pretest</h2>
+     <p class="muted">Kerjakan soal berikut sebelum mempelajari materi.</p>
+     <form id="pretestForm">
+      <div style="margin-bottom:20px;padding:16px;background:#f6fff6;border-radius:10px;border:2px solid var(--sage-2)"><label style="display:block;margin-bottom:8px;font-weight:600;font-size:14px;color:var(--sage-3)">Nama Lengkap:</label> <input type="text" id="pretestName" placeholder="Masukkan nama lengkap Anda" required style="width:100%;padding:10px;border-radius:10px;border:1px solid #eef7ef;background:#ffffff;font-size:14px">
+      </div>
+      <div class="question">
+       <p>1. Diagram yang menampilkan data dalam bentuk batang adalah...</p>
+       <div class="options"><label><input type="radio" name="q1" value="A"> A. Diagram lingkaran</label> <label><input type="radio" name="q1" value="B"> B. Diagram batang</label> <label><input type="radio" name="q1" value="C"> C. Diagram garis</label> <label><input type="radio" name="q1" value="D"> D. Tabel</label>
+       </div>
+      </div>
+      <div class="question">
+       <p>2. Jika total data adalah 40 dan satu kategori bernilai 10, maka sudut sektor pada diagram lingkaran adalah...</p>
+       <div class="options"><label><input type="radio" name="q2" value="A"> A. 45°</label> <label><input type="radio" name="q2" value="B"> B. 90°</label> <label><input type="radio" name="q2" value="C"> C. 180°</label> <label><input type="radio" name="q2" value="D"> D. 360°</label>
+       </div>
+      </div>
+      <div class="question">
+       <p>3. Diagram yang paling cocok untuk menunjukkan perbandingan bagian terhadap keseluruhan adalah...</p>
+       <div class="options"><label><input type="radio" name="q3" value="A"> A. Diagram batang</label> <label><input type="radio" name="q3" value="B"> B. Diagram lingkaran</label> <label><input type="radio" name="q3" value="C"> C. Histogram</label> <label><input type="radio" name="q3" value="D"> D. Poligon</label>
+       </div>
+      </div>
+      <div class="question">
+       <p>4. Pada diagram batang, sumbu Y biasanya menunjukkan...</p>
+       <div class="options"><label><input type="radio" name="q4" value="A"> A. Kategori data</label> <label><input type="radio" name="q4" value="B"> B. Nilai/frekuensi data</label> <label><input type="radio" name="q4" value="C"> C. Waktu</label> <label><input type="radio" name="q4" value="D"> D. Nama siswa</label>
+       </div>
+      </div>
+      <div class="question">
+       <p>5. Rumus untuk menghitung persentase pada diagram lingkaran adalah...</p>
+       <div class="options"><label><input type="radio" name="q5" value="A"> A. (nilai data / total) × 180°</label> <label><input type="radio" name="q5" value="B"> B. (nilai data / total) × 100%</label> <label><input type="radio" name="q5" value="C"> C. (total / nilai data) × 100%</label> <label><input type="radio" name="q5" value="D"> D. nilai data × 100%</label>
+       </div>
+      </div><button type="submit" class="btn" style="margin-top:16px">Kirim Jawaban</button>
+     </form>
+     <div id="pretestResult"></div>
+    </div>
+   </div><!-- Tab Posttest -->
+   <div id="tab-posttest" class="tab-content hidden">
+    <div class="card">
+     <h2 id="posttestTitle">📋 Posttest</h2>
+     <p class="muted">Kerjakan soal berikut setelah mempelajari materi.</p>
+     <form id="posttestForm">
+      <div style="margin-bottom:20px;padding:16px;background:#f6fff6;border-radius:10px;border:2px solid var(--sage-2)"><label style="display:block;margin-bottom:8px;font-weight:600;font-size:14px;color:var(--sage-3)">Nama Lengkap:</label> <input type="text" id="posttestName" placeholder="Masukkan nama lengkap Anda" required style="width:100%;padding:10px;border-radius:10px;border:1px solid #eef7ef;background:#ffffff;font-size:14px">
+      </div>
+      <div class="question">
+       <p>1. Data nilai ulangan: 80 (5 siswa), 85 (8 siswa), 90 (7 siswa). Total siswa adalah...</p>
+       <div class="options"><label><input type="radio" name="q1" value="A"> A. 15 siswa</label> <label><input type="radio" name="q1" value="B"> B. 20 siswa</label> <label><input type="radio" name="q1" value="C"> C. 25 siswa</label> <label><input type="radio" name="q1" value="D"> D. 30 siswa</label>
+       </div>
+      </div>
+      <div class="question">
+       <p>2. Dari data soal nomor 1, sudut sektor untuk nilai 85 pada diagram lingkaran adalah...</p>
+       <div class="options"><label><input type="radio" name="q2" value="A"> A. 72°</label> <label><input type="radio" name="q2" value="B"> B. 90°</label> <label><input type="radio" name="q2" value="C"> C. 126°</label> <label><input type="radio" name="q2" value="D"> D. 144°</label>
+       </div>
+      </div>
+      <div class="question">
+       <p>3. Persentase siswa yang mendapat nilai 90 dari data soal nomor 1 adalah...</p>
+       <div class="options"><label><input type="radio" name="q3" value="A"> A. 25%</label> <label><input type="radio" name="q3" value="B"> B. 30%</label> <label><input type="radio" name="q3" value="C"> C. 35%</label> <label><input type="radio" name="q3" value="D"> D. 40%</label>
+       </div>
+      </div>
+      <div class="question">
+       <p>4. Diagram yang paling tepat untuk membandingkan jumlah siswa di setiap kelas adalah...</p>
+       <div class="options"><label><input type="radio" name="q4" value="A"> A. Diagram lingkaran</label> <label><input type="radio" name="q4" value="B"> B. Diagram batang</label> <label><input type="radio" name="q4" value="C"> C. Diagram garis</label> <label><input type="radio" name="q4" value="D"> D. Piktogram</label>
+       </div>
+      </div>
+      <div class="question">
+       <p>5. Jika sudut sektor pada diagram lingkaran adalah 120°, maka persentasenya adalah...</p>
+       <div class="options"><label><input type="radio" name="q5" value="A"> A. 25%</label> <label><input type="radio" name="q5" value="B"> B. 33,3%</label> <label><input type="radio" name="q5" value="C"> C. 40%</label> <label><input type="radio" name="q5" value="D"> D. 50%</label>
+       </div>
+      </div><button type="submit" class="btn" style="margin-top:16px">Kirim Jawaban</button>
+     </form>
+     <div id="posttestResult"></div>
+    </div>
+   </div><!-- Tab Game -->
+   <div id="tab-game" class="tab-content hidden">
+    <div class="card">
+     <h2 id="gameTitle">🎮 Game Tebak Diagram</h2>
+     <p class="muted">Uji pemahamanmu dengan game seru ini! Pilih jawaban yang benar.</p>
+     <div class="score-display" style="margin:16px 0">
+      <div>
+       Skor: <span id="gameScore">0</span>
+      </div>
+      <div style="font-size:14px;margin-top:4px">
+       Soal ke-<span id="gameQuestion">1</span> dari 5
+      </div>
+     </div>
+     <div id="gameContent">
+      <div style="margin:20px 0">
+       <canvas id="gameChart" style="max-width:500px;margin:0 auto;display:block"></canvas>
+      </div>
+      <div style="margin:20px 0">
+       <h3 id="gameQuestionText" style="color:var(--sage-3);margin-bottom:12px"></h3>
+       <div id="gameOptions"></div>
+      </div>
+      <div class="controls"><button class="btn" id="gameNextBtn" onclick="nextGameQuestion()" style="display:none">Soal Berikutnya</button> <button class="btn ghost" onclick="restartGame()">Mulai Ulang</button>
+      </div>
+     </div>
+     <div id="gameResult" class="hidden"></div>
+    </div>
+   </div><!-- Tab Hasil -->
+   <div id="tab-hasil" class="tab-content hidden">
+    <div class="card">
+     <h2>📊 Hasil Tes</h2>
+     <p class="muted">Riwayat hasil pretest dan posttest Anda.</p>
+     <div id="resultsList" style="margin-top:16px"></div>
+    </div>
+   </div><!-- Tab Penyusun -->
+   <div id="tab-penyusun" class="tab-content hidden">
+    <div class="card">
+     <h2>👤 Tentang Penyusun</h2>
+     <div class="author-card" style="margin-top:20px">
+      <div style="width:120px;height:120px;border-radius:50%;overflow:hidden;margin:0 auto 20px;box-shadow:0 8px 24px rgba(125,167,125,0.2);border:4px solid white;background:white"><img src="https://lh3.googleusercontent.com/d/1jCPMmS2dzJiy8f8KxxdRFegg-F4WWSUD" alt="Aulyanissa Tsaqifa Maharshall" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--sage-3),var(--sage-2));display:flex;align-items:center;justify-content:center;font-size:48px\'>👩‍🏫</div>';">
+      </div>
+      <h3 id="authorName" style="margin:0 0 8px 0;font-size:24px;color:var(--sage-3)">Aulyanissa Tsaqifa Maharshall</h3>
+      <p style="color:var(--muted);margin:12px 0">Penyusun Media Pembelajaran</p>
+      <div style="background:white;padding:20px;border-radius:12px;margin-top:20px;text-align:left">
+       <h4 style="color:var(--sage-3);margin:0 0 12px 0">📚 Tentang Media Pembelajaran Ini</h4>
+       <p style="margin:8px 0;line-height:1.6">Media pembelajaran interaktif ini dirancang untuk membantu siswa kelas VII memahami materi Penyajian Data dengan cara yang menyenangkan dan mudah dipahami.</p>
+       <p style="margin:8px 0;line-height:1.6">Dilengkapi dengan materi lengkap, LKPD interaktif, soal pretest &amp; posttest, serta game edukatif untuk meningkatkan pemahaman siswa.</p>
+       <div style="margin-top:16px;padding:12px;background:#f6fff6;border-radius:8px">
+        <p style="margin:0;font-size:13px;color:var(--muted)">💡 <strong>Fitur Unggulan:</strong></p>
+        <ul style="margin:8px 0;padding-left:20px;font-size:13px">
+         <li>Materi lengkap dengan diagram interaktif</li>
+         <li>LKPD untuk praktik langsung</li>
+         <li>Pretest &amp; Posttest dengan penyimpanan hasil</li>
+         <li>Game edukatif untuk belajar sambil bermain</li>
+        </ul>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      app_title: "Media Pembelajaran: Penyajian Data",
+      app_subtitle: "Matematika Kelas VII - Diagram Batang & Lingkaran",
+      lkpd_title: "📝 Lembar Kerja Peserta Didik (LKPD)",
+      pretest_title: "📋 Pretest",
+      posttest_title: "📋 Posttest",
+      game_title: "🎮 Game Tebak Diagram",
+      author_name: "Aulyanissa Tsaqifa Maharshall",
+      background_color: "#f9fdf9",
+      card_color: "#ffffff",
+      primary_color: "#7da77d",
+      secondary_color: "#bcd8c1",
+      text_color: "#0b1a16",
+      font_family: "Poppins",
+      font_size: 14
+    };
+
+    let barChartInstance = null;
+    let pieChartInstance = null;
+    let gameChartInstance = null;
+    let testResults = [];
+    let exampleCharts = [];
+    
+    // Game state
+    let gameScore = 0;
+    let currentGameQuestion = 0;
+    let gameQuestions = [];
+
+    // Data SDK Handler
+    const dataHandler = {
+      onDataChanged(data) {
+        testResults = data;
+        renderResults();
+      }
+    };
+
+    // Initialize SDKs
+    async function initApp() {
+      if (window.dataSdk) {
+        const initResult = await window.dataSdk.init(dataHandler);
+        if (!initResult.isOk) {
+          console.error("Failed to initialize data SDK");
+        }
+      }
+
+      if (window.elementSdk) {
+        await window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => {
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const baseFontStack = 'system-ui, -apple-system, "Segoe UI", Roboto, Arial';
+
+            document.body.style.background = `linear-gradient(180deg, ${config.background_color || defaultConfig.background_color} 0%, #ffffff 60%)`;
+            document.body.style.color = config.text_color || defaultConfig.text_color;
+            document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+            document.body.style.fontSize = `${baseSize}px`;
+
+            document.getElementById('appTitle').textContent = config.app_title || defaultConfig.app_title;
+            document.getElementById('appTitle').style.fontFamily = `${customFont}, ${baseFontStack}`;
+            document.getElementById('appTitle').style.fontSize = `${baseSize * 1.3}px`;
+            document.getElementById('appTitle').style.color = config.text_color || defaultConfig.text_color;
+
+            document.getElementById('appSubtitle').textContent = config.app_subtitle || defaultConfig.app_subtitle;
+            document.getElementById('appSubtitle').style.fontFamily = `${customFont}, ${baseFontStack}`;
+            document.getElementById('appSubtitle').style.fontSize = `${baseSize * 0.93}px`;
+
+            document.getElementById('lkpdTitle').textContent = config.lkpd_title || defaultConfig.lkpd_title;
+            document.getElementById('lkpdTitle').style.fontFamily = `${customFont}, ${baseFontStack}`;
+            document.getElementById('lkpdTitle').style.fontSize = `${baseSize * 1.43}px`;
+            document.getElementById('lkpdTitle').style.color = config.primary_color || defaultConfig.primary_color;
+
+            document.getElementById('pretestTitle').textContent = config.pretest_title || defaultConfig.pretest_title;
+            document.getElementById('pretestTitle').style.fontFamily = `${customFont}, ${baseFontStack}`;
+            document.getElementById('pretestTitle').style.fontSize = `${baseSize * 1.43}px`;
+            document.getElementById('pretestTitle').style.color = config.primary_color || defaultConfig.primary_color;
+
+            document.getElementById('posttestTitle').textContent = config.posttest_title || defaultConfig.posttest_title;
+            document.getElementById('posttestTitle').style.fontFamily = `${customFont}, ${baseFontStack}`;
+            document.getElementById('posttestTitle').style.fontSize = `${baseSize * 1.43}px`;
+            document.getElementById('posttestTitle').style.color = config.primary_color || defaultConfig.primary_color;
+
+            document.getElementById('gameTitle').textContent = config.game_title || defaultConfig.game_title;
+            document.getElementById('gameTitle').style.fontFamily = `${customFont}, ${baseFontStack}`;
+            document.getElementById('gameTitle').style.fontSize = `${baseSize * 1.43}px`;
+            document.getElementById('gameTitle').style.color = config.primary_color || defaultConfig.primary_color;
+
+            document.getElementById('authorName').textContent = config.author_name || defaultConfig.author_name;
+            document.getElementById('authorName').style.fontFamily = `${customFont}, ${baseFontStack}`;
+            document.getElementById('authorName').style.fontSize = `${baseSize * 1.71}px`;
+            document.getElementById('authorName').style.color = config.primary_color || defaultConfig.primary_color;
+
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+              card.style.background = config.card_color || defaultConfig.card_color;
+            });
+
+            const buttons = document.querySelectorAll('.btn:not(.ghost)');
+            buttons.forEach(btn => {
+              btn.style.background = `linear-gradient(90deg, ${config.primary_color || defaultConfig.primary_color}, ${config.secondary_color || defaultConfig.secondary_color})`;
+            });
+
+            const activeButtons = document.querySelectorAll('nav.topnav button.active');
+            activeButtons.forEach(btn => {
+              btn.style.background = `linear-gradient(90deg, ${config.primary_color || defaultConfig.primary_color}, ${config.secondary_color || defaultConfig.secondary_color})`;
+            });
+
+            const logo = document.querySelector('.logo');
+            logo.style.background = `linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color}, ${config.secondary_color || defaultConfig.secondary_color})`;
+
+            const scoreDisplay = document.querySelector('.score-display');
+            if (scoreDisplay) {
+              scoreDisplay.style.background = `linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color}, ${config.secondary_color || defaultConfig.secondary_color})`;
+            }
+
+            const authorAvatar = document.querySelector('.author-avatar');
+            if (authorAvatar) {
+              authorAvatar.style.background = `linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color}, ${config.secondary_color || defaultConfig.secondary_color})`;
+            }
+          },
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              {
+                get: () => config.background_color || defaultConfig.background_color,
+                set: (value) => {
+                  if (window.elementSdk) {
+                    window.elementSdk.config.background_color = value;
+                    window.elementSdk.setConfig({ background_color: value });
+                  }
+                }
+              },
+              {
+                get: () => config.card_color || defaultConfig.card_color,
+                set: (value) => {
+                  if (window.elementSdk) {
+                    window.elementSdk.config.card_color = value;
+                    window.elementSdk.setConfig({ card_color: value });
+                  }
+                }
+              },
+              {
+                get: () => config.text_color || defaultConfig.text_color,
+                set: (value) => {
+                  if (window.elementSdk) {
+                    window.elementSdk.config.text_color = value;
+                    window.elementSdk.setConfig({ text_color: value });
+                  }
+                }
+              },
+              {
+                get: () => config.primary_color || defaultConfig.primary_color,
+                set: (value) => {
+                  if (window.elementSdk) {
+                    window.elementSdk.config.primary_color = value;
+                    window.elementSdk.setConfig({ primary_color: value });
+                  }
+                }
+              },
+              {
+                get: () => config.secondary_color || defaultConfig.secondary_color,
+                set: (value) => {
+                  if (window.elementSdk) {
+                    window.elementSdk.config.secondary_color = value;
+                    window.elementSdk.setConfig({ secondary_color: value });
+                  }
+                }
+              }
+            ],
+            borderables: [],
+            fontEditable: {
+              get: () => config.font_family || defaultConfig.font_family,
+              set: (value) => {
+                if (window.elementSdk) {
+                  window.elementSdk.config.font_family = value;
+                  window.elementSdk.setConfig({ font_family: value });
+                }
+              }
+            },
+            fontSizeable: {
+              get: () => config.font_size || defaultConfig.font_size,
+              set: (value) => {
+                if (window.elementSdk) {
+                  window.elementSdk.config.font_size = value;
+                  window.elementSdk.setConfig({ font_size: value });
+                }
+              }
+            }
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ["app_title", config.app_title || defaultConfig.app_title],
+            ["app_subtitle", config.app_subtitle || defaultConfig.app_subtitle],
+            ["lkpd_title", config.lkpd_title || defaultConfig.lkpd_title],
+            ["pretest_title", config.pretest_title || defaultConfig.pretest_title],
+            ["posttest_title", config.posttest_title || defaultConfig.posttest_title],
+            ["game_title", config.game_title || defaultConfig.game_title],
+            ["author_name", config.author_name || defaultConfig.author_name]
+          ])
+        });
+      }
+    }
+
+    // Tab Navigation
+    document.querySelectorAll('nav.topnav button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        document.querySelectorAll('nav.topnav button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+        document.getElementById(`tab-${tab}`).classList.remove('hidden');
+        
+        if (tab === 'game') {
+          initGame();
+        }
+      });
+    });
+
+    // LKPD Functions
+    function addDataRow() {
+      const container = document.getElementById('dataInputs');
+      const row = document.createElement('div');
+      row.className = 'data-row';
+      row.innerHTML = `
+        <input type="text" placeholder="Kategori" class="cat-input">
+        <input type="number" placeholder="Nilai" min="0" class="val-input">
+        <button onclick="removeDataRow(this)">Hapus</button>
+      `;
+      container.appendChild(row);
+    }
+
+    function removeDataRow(btn) {
+      const rows = document.querySelectorAll('.data-row');
+      if (rows.length > 1) {
+        btn.parentElement.remove();
+      } else {
+        showToast('Minimal harus ada 1 data');
+      }
+    }
+
+    function generateCharts() {
+      const categories = [];
+      const values = [];
+      
+      document.querySelectorAll('.data-row').forEach(row => {
+        const cat = row.querySelector('.cat-input').value.trim();
+        const val = parseFloat(row.querySelector('.val-input').value) || 0;
+        if (cat && val > 0) {
+          categories.push(cat);
+          values.push(val);
+        }
+      });
+
+      if (categories.length === 0) {
+        showToast('Masukkan data yang valid');
+        return;
+      }
+
+      const total = values.reduce((a, b) => a + b, 0);
+      const title = document.getElementById('dataTitle').value || 'Data';
+
+      if (barChartInstance) barChartInstance.destroy();
+      if (pieChartInstance) pieChartInstance.destroy();
+
+      const barCtx = document.getElementById('barChart').getContext('2d');
+      barChartInstance = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+          labels: categories,
+          datasets: [{
+            label: 'Frekuensi',
+            data: values,
+            backgroundColor: 'rgba(125, 167, 125, 0.7)',
+            borderColor: 'rgba(125, 167, 125, 1)',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: { display: true, text: `Diagram Batang: ${title}`, font: { size: 16, weight: 'bold' } },
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 } }
+          }
+        }
+      });
+
+      const pieCtx = document.getElementById('pieChart').getContext('2d');
+      const colors = ['#7da77d', '#9fc19a', '#bcd8c1', '#d4e7d4', '#e8f5e8', '#f6fff6'];
+      pieChartInstance = new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+          labels: categories,
+          datasets: [{
+            data: values,
+            backgroundColor: colors.slice(0, categories.length),
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: { display: true, text: `Diagram Lingkaran: ${title}`, font: { size: 16, weight: 'bold' } },
+            legend: { position: 'bottom' }
+          }
+        }
+      });
+
+      const maxIndex = values.indexOf(Math.max(...values));
+      const percentages = values.map(v => ((v / total) * 100).toFixed(1));
+      const angles = values.map(v => ((v / total) * 360).toFixed(1));
+      
+      let analysisHTML = `<strong>Total data:</strong> ${total}<br>`;
+      analysisHTML += `<strong>Kategori terbanyak:</strong> ${categories[maxIndex]} (${values[maxIndex]} atau ${percentages[maxIndex]}%)<br><br>`;
+      analysisHTML += '<strong>Detail per kategori:</strong><br>';
+      categories.forEach((cat, i) => {
+        analysisHTML += `• ${cat}: ${values[i]} (${percentages[i]}%, sudut ${angles[i]}°)<br>`;
+      });
+
+      document.getElementById('analysisText').innerHTML = analysisHTML;
+      document.getElementById('chartResults').classList.remove('hidden');
+      showToast('Diagram berhasil dibuat!');
+    }
+
+    // Test Functions
+    const pretestAnswers = { q1: 'B', q2: 'B', q3: 'B', q4: 'B', q5: 'B' };
+    const posttestAnswers = { q1: 'B', q2: 'D', q3: 'C', q4: 'B', q5: 'B' };
+
+    document.getElementById('pretestForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await handleTestSubmit('pretest', pretestAnswers, e.target);
+    });
+
+    document.getElementById('posttestForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await handleTestSubmit('posttest', posttestAnswers, e.target);
+    });
+
+    async function handleTestSubmit(type, correctAnswers, form) {
+      const nameInput = document.getElementById(`${type}Name`);
+      const studentName = nameInput.value.trim();
+
+      if (!studentName) {
+        showToast('Masukkan nama lengkap terlebih dahulu');
+        nameInput.focus();
+        return;
+      }
+
+      const formData = new FormData(form);
+      let score = 0;
+      let answers = {};
+
+      for (let [key, value] of formData.entries()) {
+        answers[key] = value;
+        if (value === correctAnswers[key]) score += 20;
+      }
+
+      if (Object.keys(answers).length < 5) {
+        showToast('Jawab semua soal terlebih dahulu');
+        return;
+      }
+
+      const submitBtn = form.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = 'Menyimpan...<span class="spinner"></span>';
+
+      if (window.dataSdk && testResults.length < 999) {
+        const result = await window.dataSdk.create({
+          id: Date.now().toString(),
+          name: studentName,
+          type: type,
+          score: score,
+          answers: JSON.stringify(answers),
+          timestamp: new Date().toISOString()
+        });
+
+        if (result.isOk) {
+          showToast(`${type === 'pretest' ? 'Pretest' : 'Posttest'} berhasil disimpan!`);
+          displayTestResult(type, score, studentName);
+        } else {
+          showToast('Gagal menyimpan hasil');
+        }
+      } else if (testResults.length >= 999) {
+        showToast('Batas maksimal 999 hasil tes tercapai');
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Kirim Jawaban';
+    }
+
+    function displayTestResult(type, score, studentName) {
+      const resultDiv = document.getElementById(`${type}Result`);
+      let message = '';
+      let className = 'result ';
+
+      if (score >= 80) {
+        message = `Luar biasa, ${studentName}! Nilai Anda: ${score}/100. Anda sangat memahami materi!`;
+        className += 'success';
+      } else if (score >= 60) {
+        message = `Bagus, ${studentName}! Nilai Anda: ${score}/100. Terus tingkatkan pemahaman Anda!`;
+        className += 'success';
+      } else {
+        message = `${studentName}, Nilai Anda: ${score}/100. Pelajari kembali materi untuk hasil yang lebih baik.`;
+        className += 'info';
+      }
+
+      resultDiv.innerHTML = `<div class="${className}">${message}</div>`;
+    }
+
+    function renderResults() {
+      const container = document.getElementById('resultsList');
+      
+      if (testResults.length === 0) {
+        container.innerHTML = '<p class="muted">Belum ada hasil tes.</p>';
+        return;
+      }
+
+      const sortedResults = [...testResults].sort((a, b) => 
+        new Date(b.timestamp) - new Date(a.timestamp)
+      );
+
+      let html = '';
+      sortedResults.forEach(result => {
+        const date = new Date(result.timestamp);
+        const dateStr = date.toLocaleDateString('id-ID', { 
+          day: 'numeric', 
+          month: 'long', 
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        html += `
+          <div class="card" style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+              <div style="flex:1;min-width:200px">
+                <div style="margin-bottom:8px">
+                  <span class="tag">${result.type === 'pretest' ? 'Pretest' : 'Posttest'}</span>
+                </div>
+                <div style="font-size:16px;font-weight:600;color:var(--sage-3);margin-bottom:4px">
+                  👤 ${result.name || 'Tanpa Nama'}
+                </div>
+                <strong style="font-size:18px;color:#0b1a16">Nilai: ${result.score}/100</strong>
+              </div>
+              <span class="small" style="text-align:right">${dateStr}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Game Functions
+    function initGame() {
+      gameQuestions = [
+        {
+          type: 'bar',
+          data: { labels: ['A', 'B', 'C', 'D'], values: [5, 8, 3, 6] },
+          question: 'Kategori mana yang memiliki nilai tertinggi?',
+          options: ['A', 'B', 'C', 'D'],
+          correct: 1
+        },
+        {
+          type: 'pie',
+          data: { labels: ['Merah (40%)', 'Biru (30%)', 'Hijau (20%)', 'Kuning (10%)'], values: [40, 30, 20, 10] },
+          question: 'Berapa persentase warna Biru?',
+          options: ['40%', '30%', '20%', '10%'],
+          correct: 1
+        },
+        {
+          type: 'bar',
+          data: { labels: ['Jan', 'Feb', 'Mar', 'Apr'], values: [10, 15, 12, 18] },
+          question: 'Bulan mana yang memiliki nilai terendah?',
+          options: ['Jan', 'Feb', 'Mar', 'Apr'],
+          correct: 0
+        },
+        {
+          type: 'pie',
+          data: { labels: ['Apel (25%)', 'Jeruk (35%)', 'Mangga (25%)', 'Pisang (15%)'], values: [25, 35, 25, 15] },
+          question: 'Buah mana yang paling banyak?',
+          options: ['Apel', 'Jeruk', 'Mangga', 'Pisang'],
+          correct: 1
+        },
+        {
+          type: 'bar',
+          data: { labels: ['Senin', 'Selasa', 'Rabu', 'Kamis'], values: [20, 20, 25, 15] },
+          question: 'Hari mana yang memiliki nilai tertinggi?',
+          options: ['Senin', 'Selasa', 'Rabu', 'Kamis'],
+          correct: 2
+        }
+      ];
+      
+      gameScore = 0;
+      currentGameQuestion = 0;
+      document.getElementById('gameScore').textContent = gameScore;
+      document.getElementById('gameQuestion').textContent = currentGameQuestion + 1;
+      document.getElementById('gameResult').classList.add('hidden');
+      document.getElementById('gameContent').classList.remove('hidden');
+      
+      loadGameQuestion();
+    }
+
+    function loadGameQuestion() {
+      if (currentGameQuestion >= gameQuestions.length) {
+        showGameResult();
+        return;
+      }
+
+      const q = gameQuestions[currentGameQuestion];
+      document.getElementById('gameQuestionText').textContent = q.question;
+      document.getElementById('gameQuestion').textContent = currentGameQuestion + 1;
+      
+      if (gameChartInstance) gameChartInstance.destroy();
+      
+      const ctx = document.getElementById('gameChart').getContext('2d');
+      if (q.type === 'bar') {
+        gameChartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: q.data.labels,
+            datasets: [{
+              label: 'Nilai',
+              data: q.data.values,
+              backgroundColor: ['#7da77d', '#9fc19a', '#bcd8c1', '#d4e7d4'],
+              borderColor: '#7da77d',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+          }
+        });
+      } else {
+        gameChartInstance = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: q.data.labels,
+            datasets: [{
+              data: q.data.values,
+              backgroundColor: ['#7da77d', '#9fc19a', '#bcd8c1', '#d4e7d4'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+          }
+        });
+      }
+      
+      const optionsContainer = document.getElementById('gameOptions');
+      optionsContainer.innerHTML = '';
+      q.options.forEach((opt, idx) => {
+        const div = document.createElement('div');
+        div.className = 'game-option';
+        div.textContent = opt;
+        div.onclick = () => selectGameAnswer(idx);
+        optionsContainer.appendChild(div);
+      });
+      
+      document.getElementById('gameNextBtn').style.display = 'none';
+    }
+
+    function selectGameAnswer(selected) {
+      const q = gameQuestions[currentGameQuestion];
+      const options = document.querySelectorAll('.game-option');
+      
+      options.forEach((opt, idx) => {
+        opt.onclick = null;
+        if (idx === q.correct) {
+          opt.classList.add('correct');
+        } else if (idx === selected) {
+          opt.classList.add('wrong');
+        }
+      });
+      
+      if (selected === q.correct) {
+        gameScore += 20;
+        document.getElementById('gameScore').textContent = gameScore;
+        showToast('Benar! +20 poin');
+      } else {
+        showToast('Salah! Coba lagi di soal berikutnya');
+      }
+      
+      document.getElementById('gameNextBtn').style.display = 'inline-block';
+    }
+
+    function nextGameQuestion() {
+      currentGameQuestion++;
+      loadGameQuestion();
+    }
+
+    function showGameResult() {
+      document.getElementById('gameContent').classList.add('hidden');
+      const resultDiv = document.getElementById('gameResult');
+      resultDiv.classList.remove('hidden');
+      
+      let message = '';
+      if (gameScore === 100) {
+        message = '🏆 Sempurna! Skor: 100/100. Kamu Master Diagram!';
+      } else if (gameScore >= 80) {
+        message = '🌟 Luar Biasa! Skor: ' + gameScore + '/100. Kamu sangat paham!';
+      } else if (gameScore >= 60) {
+        message = '👍 Bagus! Skor: ' + gameScore + '/100. Terus berlatih!';
+      } else {
+        message = '💪 Skor: ' + gameScore + '/100. Pelajari materi lagi ya!';
+      }
+      
+      resultDiv.innerHTML = `<div class="result success" style="text-align:center;font-size:18px">${message}</div>`;
+    }
+
+    function restartGame() {
+      initGame();
+    }
+
+    // Create example charts for material
+    function createExampleCharts() {
+      const exBarCtx = document.getElementById('exampleBarChart');
+      if (exBarCtx) {
+        const exBarChart = new Chart(exBarCtx.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['Nilai 70', 'Nilai 75', 'Nilai 80', 'Nilai 85', 'Nilai 90'],
+            datasets: [{
+              label: 'Jumlah Siswa',
+              data: [4, 6, 8, 7, 5],
+              backgroundColor: ['#7da77d', '#9fc19a', '#bcd8c1', '#9fc19a', '#7da77d'],
+              borderColor: '#7da77d',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              title: { display: false }
+            },
+            scales: {
+              y: { 
+                beginAtZero: true, 
+                ticks: { stepSize: 2 },
+                title: { display: true, text: 'Jumlah Siswa' }
+              },
+              x: {
+                title: { display: true, text: 'Nilai' }
+              }
+            }
+          }
+        });
+        exampleCharts.push(exBarChart);
+      }
+
+      const exPieCtx = document.getElementById('examplePieChart');
+      if (exPieCtx) {
+        const exPieChart = new Chart(exPieCtx.getContext('2d'), {
+          type: 'pie',
+          data: {
+            labels: ['Membaca (26.7%)', 'Olahraga (40%)', 'Musik (20%)', 'Menggambar (13.3%)'],
+            datasets: [{
+              data: [8, 12, 6, 4],
+              backgroundColor: ['#7da77d', '#9fc19a', '#bcd8c1', '#d4e7d4'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' },
+              title: { display: false }
+            }
+          }
+        });
+        exampleCharts.push(exPieChart);
+      }
+
+      const solBarCtx = document.getElementById('solutionBarChart');
+      if (solBarCtx) {
+        const solBarChart = new Chart(solBarCtx.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['Membaca', 'Olahraga', 'Musik', 'Menggambar'],
+            datasets: [{
+              label: 'Jumlah Siswa',
+              data: [8, 12, 6, 4],
+              backgroundColor: ['#7da77d', '#9fc19a', '#bcd8c1', '#d4e7d4'],
+              borderColor: '#7da77d',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: { 
+                beginAtZero: true, 
+                ticks: { stepSize: 2 },
+                title: { display: true, text: 'Jumlah Siswa' }
+              },
+              x: {
+                title: { display: true, text: 'Hobi' }
+              }
+            }
+          }
+        });
+        exampleCharts.push(solBarChart);
+      }
+
+      const solPieCtx = document.getElementById('solutionPieChart');
+      if (solPieCtx) {
+        const solPieChart = new Chart(solPieCtx.getContext('2d'), {
+          type: 'pie',
+          data: {
+            labels: ['Membaca (26.7%)', 'Olahraga (40%)', 'Musik (20%)', 'Menggambar (13.3%)'],
+            datasets: [{
+              data: [8, 12, 6, 4],
+              backgroundColor: ['#7da77d', '#9fc19a', '#bcd8c1', '#d4e7d4'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' }
+            }
+          }
+        });
+        exampleCharts.push(solPieChart);
+      }
+    }
+
+    initApp();
+    
+    setTimeout(() => {
+      createExampleCharts();
+    }, 100);
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99ca913e547cfd27',t:'MTc2MjgzMDMyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
